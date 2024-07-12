@@ -1,7 +1,8 @@
-from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 
+from christmas_party.forms import AttendanceForm
 from christmas_party.models import Attendance
 
 
@@ -16,25 +17,17 @@ def generate_coupon_code():
 
 class AttendanceCreateView(CreateView):
     model = Attendance
-    fields = ["full_name", "company", "contact_number"]
+    form_class = AttendanceForm
 
-    def post(self, request, *args, **kwargs):
-        full_name = request.POST.get("full_name")
-        company = request.POST.get("company")
-        contact_number = request.POST.get("contact_number")
-
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
         coupon_code = generate_coupon_code()
+        self.object.coupon = coupon_code
+        self.object.save()
+        return super().form_valid(form)
 
-        # Create Attendance instance and save it
-        attendance_instance = Attendance.objects.create(
-            full_name=full_name,
-            company=company,
-            contact_number=contact_number,
-            coupon=coupon_code,
-        )
-
-        # Redirect to success page with coupon code
-        return redirect("attendance-success", coupon_code=coupon_code)
+    def get_success_url(self):
+        return reverse("attendance-success", kwargs={"coupon_code": self.object.coupon})
 
 
 class SuccessView(TemplateView):
@@ -42,10 +35,11 @@ class SuccessView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["coupon_code"] = kwargs.get("coupon_code")
+        context["coupon_code"] = self.kwargs.get("coupon_code")
         return context
 
 
-# TODO create a modelform for attendance model
-# TODO save the data in google sheets
-# TODO fix the validations
+# TODO save the data in google sheets(optional because we have a admin site)
+# TODO fix the validations in contact number
+# TODO make UI applicable to the christmas party theme
+# TODO make the form more informative and more beautiful
