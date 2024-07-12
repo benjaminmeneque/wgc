@@ -11,6 +11,7 @@ class AttendanceAdmin(admin.ModelAdmin):
         "coupon",
         "create_timestamp",
     ]
+    exclude = ["coupon"]
 
 
 admin.site.register(Attendance, AttendanceAdmin)
