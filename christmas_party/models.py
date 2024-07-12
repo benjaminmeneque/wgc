@@ -13,9 +13,13 @@ class Attendance(models.Model):
         ("SR", "Senior"),
         ("GR", "Graduate"),
     ]
-    full_name = models.CharField(max_length=255)
-    company = models.CharField(choices=COMPANY_CHOICES, max_length=100)
-    contact_number = PhoneNumberField(region="PH")
+    full_name = models.CharField(max_length=255, help_text="enter your full name")
+    company = models.CharField(
+        choices=COMPANY_CHOICES, max_length=100, help_text="please select your company"
+    )
+    contact_number = PhoneNumberField(
+        region="PH", help_text="enter your contact number (e.g., 09123456789)"
+    )
     coupon = models.CharField(max_length=255)
     create_timestamp = models.DateTimeField(auto_now_add=True)
 
