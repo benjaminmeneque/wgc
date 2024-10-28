@@ -15,7 +15,7 @@ class Attendance(models.Model):
     ]
     full_name = models.CharField(max_length=255, help_text="enter your full name")
     company = models.CharField(
-        choices=COMPANY_CHOICES, max_length=100, help_text="please select your company"
+        choices=COMPANY_CHOICES, max_length=100, help_text="select your company"
     )
     contact_number = PhoneNumberField(
         region="PH", help_text="enter your contact number (e.g., 09123456789)"
